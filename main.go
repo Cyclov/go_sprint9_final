@@ -42,10 +42,6 @@ func maximum(data []int) int {
 // maxChunks returns the maximum number of elements in a chunks.
 func maxChunks(data []int) int {
 
-	if CHUNKS < 1 {
-		return 0
-	}
-
 	if len(data) == 1 {
 		return data[0]
 	}
@@ -57,11 +53,15 @@ func maxChunks(data []int) int {
 	var wg sync.WaitGroup
 
 	maxInChanks := make([]int, CHUNKS)
-	chunkSize := SIZE / CHUNKS
+	chunkSize := len(data) / CHUNKS
 
 	for i := 0; i < CHUNKS; i++ {
 		chunkStart := chunkSize * i
 		chunkEnd := min(chunkStart+chunkSize, len(data)) //проверяем чтобы не вылезти за границы массива.
+
+		if i == CHUNKS-1 {
+			chunkEnd = len(data) // В последний чанк положим все что осталось до конца массива.
+		}
 
 		wg.Add(1)
 		go func(data []int, i int) {
